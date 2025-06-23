@@ -24,7 +24,7 @@ def generate_ctd(ports, output_file):
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         f.write('<cherrytree>\n')
-        f.write('  <node name="Open Ports" read_only="false" custom_icon_id="0">\n')
+        f.write('  <node name="Open Ports" read_only="false" custom_icon_id="0" type="rich_text">\n')
         f.write('    <rich_text><![CDATA[]]></rich_text>\n')
         for port, proto, service in ports:
             f.write(f'    <node name="Port {port}/{proto} - {service}" read_only="false" custom_icon_id="0" type="rich_text">\n')
