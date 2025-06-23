@@ -24,15 +24,22 @@ def generate_ctb(ports, output_file):
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         f.write('<cherrytree>\n')
-        unique_id = 1
+        f.write(
+            '  <node unique_id="1" master_id="0" name="Ports" '
+            'prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" '
+            'nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" '
+            'ts_creation="0" ts_lastsave="0">\n'
+        )
+        unique_id = 2
         for port, proto, service in ports:
             f.write(
-                f'  <node unique_id="{unique_id}" master_id="0" name="Port {port}/{proto} - {service}" '
+                f'    <node unique_id="{unique_id}" master_id="1" name="Port {port}/{proto} - {service}" '
                 'prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" '
                 'nosearch_ch="0" custom_icon_id="0" is_bold="0" foreground="" '
                 'ts_creation="0" ts_lastsave="0"/>\n'
             )
             unique_id += 1
+        f.write('  </node>\n')
         f.write('</cherrytree>\n')
     print(f"✅ Cherrytree file generated: {output_file}")
 
