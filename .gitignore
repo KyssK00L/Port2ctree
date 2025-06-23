@@ -1,0 +1,29 @@
+# Generated output files
+*.ctd
+*.ctb
+ports_nodes.*
+
+# Test files
+rustscan
+test_*
+exemple.*
+database.ctd
+shell.ctd
+file*transfert.ctd
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
