@@ -10,6 +10,6 @@ setup(
         ],
     },
     author='kyssK00l',
-    description='Convertit un scan Nmap/Rustscan en .ctd pour Cherrytree',
+    description='Convertit un scan Nmap/Rustscan en .ctb pour Cherrytree',
 )
 

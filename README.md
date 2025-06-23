@@ -1,6 +1,6 @@
 # Port2ctree
 
-Convert Nmap or Rustscan results into a Cherrytree (.ctd) file.
+Convert Nmap or Rustscan results into a Cherrytree (.ctb) file.
 
 ## Installation
 
@@ -35,13 +35,13 @@ pip install -e .
    ```bash
    port2ctree scan.txt
    ```
-   A `ports_nodes.ctd` file is created.
+   A `ports_nodes.ctb` file is created.
 
 ### Import into Cherrytree
 
 1. Open Cherrytree and select the destination node.
 2. Go to **File** > **Import**.
-3. Choose **Cherrytree XML File (.ctd)** and select `ports_nodes.ctd`.
+3. Choose **Cherrytree XML File (.ctb)** and select `ports_nodes.ctb`.
 4. The ports will appear as child nodes.
 
 ## Tips
