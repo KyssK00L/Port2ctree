@@ -27,7 +27,7 @@ def generate_ctd(ports, output_file):
         f.write('  <node name="Open Ports" read_only="false" custom_icon_id="0">\n')
         f.write('    <rich_text><![CDATA[]]></rich_text>\n')
         for port, proto, service in ports:
-            f.write(f'    <node name="Port {port}/{proto} - {service}" read_only="false" custom_icon_id="0">\n')
+            f.write(f'    <node name="Port {port}/{proto} - {service}" read_only="false" custom_icon_id="0" type="rich_text">\n')
             f.write('      <rich_text><![CDATA[\n')
             f.write(f'<b>Port:</b> {port}<br/>\n')
             f.write(f'<b>Protocol:</b> {proto}<br/>\n')
