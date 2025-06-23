@@ -12,6 +12,13 @@ cd Port2ctee
 pip install .
 ```
 
+Alternatively, you can use **pipx** to install it in an isolated
+environment:
+
+```bash
+pipx install git+<repo-url>
+```
+
 For local development, use:
 
 ```bash
