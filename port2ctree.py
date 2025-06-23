@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # ─────────────────────────────────────────────────────────────
 # port2ctree.py
-# Convert an Nmap/Rustscan result file into a Cherrytree .ctb file
+# Convert an Nmap/Rustscan result file into a Cherrytree .ctd file
 # Created by kyssK00l 🐙
 # ─────────────────────────────────────────────────────────────
 
@@ -200,14 +200,14 @@ def show_help():
 Usage: port2ctree <scan_output.txt>
 
 Description:
-  This tool parses open ports from a Nmap or Rustscan output and generates a Cherrytree-compatible .ctb file.
+  This tool parses open ports from a Nmap or Rustscan output and generates a Cherrytree-compatible .ctd file.
   It creates one node per open port, including protocol, service, and a ready-to-use Nmap command.
 
 Steps after generation:
   1. Open Cherrytree.
   2. Select the node where you want to insert the ports (important!).
   3. Go to 'File' > 'Import'.
-  4. Choose 'Cherrytree XML File (.ctb)' and select the generated file: ports_nodes.ctb
+  4. Choose 'Cherrytree XML File (.ctd)' and select the generated file: ports_nodes.ctd
   5. The tree will be populated with one node per open port under the selected node.
 
 Example:
@@ -221,7 +221,7 @@ def main():
         show_help()
 
     input_file = sys.argv[1]
-    output_file = "ports_nodes.ctb"
+    output_file = "ports_nodes.ctd"
 
     if not os.path.isfile(input_file):
         print(f"⛔ File not found: {input_file}")
