@@ -12,6 +12,7 @@ setup(
             "port2ctree=port2ctree:main",
         ],
     },
+
     author="kyssK00l",
     description="Convert Nmap or Rustscan results into a Cherrytree (.ctd) file.",
     long_description=long_description,
@@ -21,6 +22,7 @@ setup(
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
+
     ],
 )
 
