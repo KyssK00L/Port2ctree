@@ -11,5 +11,9 @@ setup(
     },
     author='kyssK00l',
     description='Convertit un scan Nmap/Rustscan en .ctb pour Cherrytree',
+    license='MIT',
+    classifiers=[
+        'License :: OSI Approved :: MIT License',
+    ],
 )
 
