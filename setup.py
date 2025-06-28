@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name='port2ctree',
     version='1.0',
-    py_modules=['port2ctree'],
+    packages=['port2ctree'],
     entry_points={
         'console_scripts': [
             'port2ctree=port2ctree:main',
