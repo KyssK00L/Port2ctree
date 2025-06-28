@@ -2,6 +2,8 @@ name: Test Publish to TestPyPI
 
 on:
   workflow_dispatch:
+  release:
+    types: [published]
 
 permissions:
   contents: read
