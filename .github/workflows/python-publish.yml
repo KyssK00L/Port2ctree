@@ -18,8 +18,8 @@ jobs:
 
       - name: Set up Python
         uses: actions/setup-python@v5
-          with:
-            python-version: '3.x'
+        with:
+          python-version: '3.x'
 
       - name: Install build tools
         run: |
@@ -31,8 +31,8 @@ jobs:
 
       - name: Publish distribution 📦 to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-          with:
-            user: __token__
-            password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-            repository-url: https://test.pypi.org/legacy/
+        with:
+          user: __token__
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository-url: https://test.pypi.org/legacy/
             
