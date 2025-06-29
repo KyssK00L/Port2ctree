@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "port2ctree"
-version = "1.0"
+version = "2025.001"
 description = "Convert Nmap or Rustscan results into a Cherrytree (.ctd) file."
 authors = [{ name = "kyssK00l" }]
 readme = "README.md"
