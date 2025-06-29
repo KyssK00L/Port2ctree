@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="port2ctree",
     version="1.0",
-    py_modules=["port2ctree"],
+    packages=["port2ctree"],
     entry_points={
         "console_scripts": [
             "port2ctree=port2ctree:main",
