@@ -152,48 +152,130 @@ def get_service_icon(service, port=None):
     return get_category_icon(service, port_num)
 
 def parse_ports(filename):
+    """
+    Parse open ports from a scan output file.
+
+    Args:
+        filename (str): Path to the scan file
+
+    Returns:
+        list: Sorted list of (port, protocol, service) tuples
+
+    Raises:
+        FileNotFoundError: If the file doesn't exist
+        PermissionError: If the file can't be read
+        UnicodeDecodeError: If the file has encoding issues
+    """
     ports = set()
     pattern = re.compile(r'^(\d+)/(tcp|udp)\s+open\s+(\S+)')
-    with open(filename, 'r', encoding='utf-8') as f:
-        for line in f:
-            match = pattern.match(line.strip())
-            if match:
-                port, proto, service = match.groups()
-                ports.add((int(port), proto, service))
+
+    try:
+        with open(filename, 'r', encoding='utf-8') as f:
+            for line_num, line in enumerate(f, 1):
+                try:
+                    match = pattern.match(line.strip())
+                    if match:
+                        port, proto, service = match.groups()
+                        port_int = int(port)
+
+                        # Validate port range
+                        if not (0 < port_int <= 65535):
+                            print(f"⚠️  Warning: Invalid port number {port_int} on line {line_num}, skipping")
+                            continue
+
+                        ports.add((port_int, proto, service))
+                except ValueError as e:
+                    print(f"⚠️  Warning: Could not parse port on line {line_num}: {e}")
+                    continue
+
+    except FileNotFoundError:
+        print(f"⛔ Error: File not found: {filename}")
+        raise
+    except PermissionError:
+        print(f"⛔ Error: Permission denied while reading: {filename}")
+        raise
+    except UnicodeDecodeError as e:
+        print(f"⛔ Error: File encoding issue in {filename}: {e}")
+        print("   Try converting the file to UTF-8 encoding")
+        raise
+    except IOError as e:
+        print(f"⛔ Error: I/O error while reading {filename}: {e}")
+        raise
+
     return sorted(ports)
 
 def generate_ctb(ports, output_file):
+    """
+    Generate a Cherrytree XML file from parsed ports.
+
+    Args:
+        ports (list): List of (port, protocol, service) tuples
+        output_file (str): Path to the output file
+
+    Raises:
+        PermissionError: If the output file can't be written
+        OSError: If there's a disk space or I/O issue
+    """
     import time
     timestamp = str(int(time.time()))
-    
+
     # Change extension to .ctd for XML format
     if output_file.endswith('.ctb'):
         output_file = output_file.replace('.ctb', '.ctd')
-    
-    with open(output_file, 'w', encoding='utf-8') as f:
-        f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-        f.write('<cherrytree>\n')
-        f.write(
-            f'  <node unique_id="1534" master_id="0" name="Ports" '
-            f'prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" '
-            f'nosearch_ch="1" custom_icon_id="18" is_bold="0" foreground="" '
-            f'ts_creation="{timestamp}" ts_lastsave="{timestamp}">\n'
-        )
-        f.write('    <rich_text justification="left"></rich_text>\n')
-        f.write('    <rich_text>Ports discovered from scan</rich_text>\n')
-        unique_id = 1606
-        for port, proto, service in ports:
-            icon_id = get_service_icon(service, port)
-            f.write(
-                f'    <node unique_id="{unique_id}" master_id="0" name="port {port}/{proto} - {service}" '
-                f'prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" '
-                f'nosearch_ch="0" custom_icon_id="{icon_id}" is_bold="0" foreground="" '
-                f'ts_creation="{timestamp}" ts_lastsave="{timestamp}"/>\n'
-            )
-            unique_id += 1
-        f.write('  </node>\n')
-        f.write('</cherrytree>\n')
-    print(f"✅ Cherrytree file generated: {output_file}")
+
+    # Validate output path
+    output_dir = os.path.dirname(output_file) or '.'
+    if not os.path.exists(output_dir):
+        try:
+            os.makedirs(output_dir, exist_ok=True)
+        except OSError as e:
+            print(f"⛔ Error: Cannot create output directory {output_dir}: {e}")
+            raise
+
+    if not os.access(output_dir, os.W_OK):
+        print(f"⛔ Error: No write permission for directory: {output_dir}")
+        raise PermissionError(f"Cannot write to directory: {output_dir}")
+
+    try:
+        with open(output_file, 'w', encoding='utf-8') as f:
+            try:
+                f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+                f.write('<cherrytree>\n')
+                f.write(
+                    f'  <node unique_id="1534" master_id="0" name="Ports" '
+                    f'prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" '
+                    f'nosearch_ch="1" custom_icon_id="18" is_bold="0" foreground="" '
+                    f'ts_creation="{timestamp}" ts_lastsave="{timestamp}">\n'
+                )
+                f.write('    <rich_text justification="left"></rich_text>\n')
+                f.write('    <rich_text>Ports discovered from scan</rich_text>\n')
+                unique_id = 1606
+                for port, proto, service in ports:
+                    icon_id = get_service_icon(service, port)
+                    f.write(
+                        f'    <node unique_id="{unique_id}" master_id="0" name="port {port}/{proto} - {service}" '
+                        f'prog_lang="custom-colors" tags="" readonly="0" nosearch_me="0" '
+                        f'nosearch_ch="0" custom_icon_id="{icon_id}" is_bold="0" foreground="" '
+                        f'ts_creation="{timestamp}" ts_lastsave="{timestamp}"/>\n'
+                    )
+                    unique_id += 1
+                f.write('  </node>\n')
+                f.write('</cherrytree>\n')
+            except IOError as e:
+                print(f"⛔ Error: Failed to write to file (disk full?): {e}")
+                raise
+
+        print(f"✅ Cherrytree file generated: {output_file}")
+
+    except PermissionError:
+        print(f"⛔ Error: Permission denied while writing to: {output_file}")
+        raise
+    except OSError as e:
+        print(f"⛔ Error: Cannot write to file {output_file}: {e}")
+        raise
+    except Exception as e:
+        print(f"⛔ Error: Unexpected error while generating file: {e}")
+        raise
 
 def show_help():
     help_text = """
@@ -217,22 +299,68 @@ Example:
     sys.exit(0)
 
 def main():
+    """Main entry point for the port2ctree CLI tool."""
     if len(sys.argv) != 2 or sys.argv[1] in ('-h', '--help'):
         show_help()
 
     input_file = sys.argv[1]
     output_file = "ports_nodes.ctd"
 
-    if not os.path.isfile(input_file):
-        print(f"⛔ File not found: {input_file}")
+    # Validate input file exists
+    if not os.path.exists(input_file):
+        print(f"⛔ Error: File not found: {input_file}")
         sys.exit(1)
 
-    ports = parse_ports(input_file)
+    # Validate it's a file, not a directory
+    if not os.path.isfile(input_file):
+        print(f"⛔ Error: {input_file} is not a file")
+        sys.exit(1)
+
+    # Check read permissions
+    if not os.access(input_file, os.R_OK):
+        print(f"⛔ Error: No read permission for file: {input_file}")
+        sys.exit(1)
+
+    # Check file size (warn if > 100MB)
+    MAX_FILE_SIZE = 100 * 1024 * 1024  # 100 MB
+    try:
+        file_size = os.path.getsize(input_file)
+        if file_size == 0:
+            print(f"⛔ Error: File is empty: {input_file}")
+            sys.exit(1)
+        elif file_size > MAX_FILE_SIZE:
+            print(f"⚠️  Warning: Large file ({file_size / (1024*1024):.1f} MB). This may take a while...")
+    except OSError as e:
+        print(f"⛔ Error: Cannot access file {input_file}: {e}")
+        sys.exit(1)
+
+    # Parse ports with error handling
+    try:
+        ports = parse_ports(input_file)
+    except (FileNotFoundError, PermissionError, UnicodeDecodeError, IOError) as e:
+        # Error already printed by parse_ports
+        sys.exit(1)
+    except Exception as e:
+        print(f"⛔ Unexpected error while parsing file: {e}")
+        sys.exit(1)
+
     if not ports:
-        print("⚠️ No open ports found.")
+        print("⚠️  Warning: No open ports found in the scan file.")
+        print("   Make sure the file contains Nmap or Rustscan output with format:")
+        print("   <port>/<protocol>  open  <service>")
         sys.exit(0)
 
-    generate_ctb(ports, output_file)
+    print(f"ℹ️  Found {len(ports)} open port(s)")
+
+    # Generate output file with error handling
+    try:
+        generate_ctb(ports, output_file)
+    except (PermissionError, OSError) as e:
+        # Error already printed by generate_ctb
+        sys.exit(1)
+    except Exception as e:
+        print(f"⛔ Unexpected error while generating output: {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
